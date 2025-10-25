@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#FF5722">
+    <meta name="description" content="YouTube Kids - Application sécurisée pour enfants">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="YT Kids">
+
+    <title>YouTube Kids</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Icônes -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="child-interface">
+    <!-- Zone cachée pour accès admin (appui long 3s) -->
+    <div id="admin-access-area"></div>
+
+    <!-- En-tête -->
+    <header class="app-header">
+        <h1 class="app-title">🎬 YouTube Kids</h1>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="main-content">
+        <!-- État vide -->
+        <div id="empty-state" class="empty-state">
+            <div class="empty-icon">📺</div>
+            <p class="empty-text">Aucune vidéo disponible.<br>Demandez à un adulte d'en ajouter!</p>
+        </div>
+
+        <!-- Indicateur de chargement -->
+        <div id="loading" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Chargement...</p>
+        </div>
+
+        <!-- Grille de vidéos -->
+        <div id="videos-grid" class="videos-grid"></div>
+    </main>
+
+    <!-- Bouton d'installation PWA -->
+    <button id="install-button" class="install-button" style="display: none;">
+        📥 Installer l'application
+    </button>
+
+    <!-- Scripts -->
+    <script src="js/db.js"></script>
+    <script src="js/security.js"></script>
+    <script src="js/app.js"></script>
+
+    <!-- Enregistrement du Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker enregistré:', registration);
+                    })
+                    .catch(error => {
+                        console.log('Erreur Service Worker:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

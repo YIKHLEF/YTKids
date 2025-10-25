@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#000000">
+    <title>Lecteur - YouTube Kids</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="player-interface">
+    <!-- Bouton Retour -->
+    <button id="player-back" class="player-back">← Retour</button>
+
+    <!-- Titre de la vidéo -->
+    <div id="player-title" class="player-title"></div>
+
+    <!-- Lecteur YouTube -->
+    <div id="youtube-player"></div>
+
+    <!-- Message d'erreur -->
+    <div id="player-error" class="player-error" style="display: none;">
+        <p>⚠️ Erreur de lecture de la vidéo</p>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="js/player.js"></script>
+</body>
+</html>

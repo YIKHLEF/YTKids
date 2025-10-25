@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1976D2">
+    <title>Administration - YouTube Kids</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="admin-interface">
+    <!-- En-tête Admin -->
+    <header class="admin-header">
+        <button id="back-button" class="back-button">← Retour</button>
+        <h1>Administration</h1>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="admin-content">
+        <!-- État vide -->
+        <div id="admin-empty-state" class="admin-empty-state">
+            <p>Aucune vidéo ajoutée</p>
+        </div>
+
+        <!-- Liste des vidéos -->
+        <div id="admin-videos-list" class="admin-videos-list"></div>
+    </main>
+
+    <!-- Bouton Flottant Ajouter -->
+    <button id="fab-add" class="fab">
+        <span class="fab-icon">+</span>
+    </button>
+
+    <!-- Modal Ajout de Vidéo -->
+    <div id="add-video-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ajouter une vidéo ou playlist</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="video-url">Collez le lien YouTube ici :</label>
+                    <input type="text" id="video-url" class="input-text"
+                           placeholder="https://www.youtube.com/watch?v=...">
+                </div>
+
+                <!-- Prévisualisation -->
+                <div id="preview-section" class="preview-section" style="display: none;">
+                    <h3>Aperçu</h3>
+                    <div id="preview-content" class="preview-content"></div>
+                </div>
+
+                <!-- Erreur -->
+                <div id="error-message" class="error-message" style="display: none;"></div>
+
+                <!-- Chargement -->
+                <div id="modal-loading" class="modal-loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Récupération des informations...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-add" class="button button-secondary">Annuler</button>
+                <button id="add-video-btn" class="button button-primary">Ajouter</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal PIN -->
+    <div id="pin-modal" class="modal" style="display: flex;">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2 id="pin-title">Entrez le code PIN</h2>
+            </div>
+            <div class="modal-body">
+                <div class="pin-input-container">
+                    <input type="password" id="pin-input" class="pin-input"
+                           maxlength="4" pattern="[0-9]*" inputmode="numeric"
+                           placeholder="••••">
+                </div>
+                <div id="pin-error" class="error-message" style="display: none;"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="pin-confirm" class="button button-primary button-block">Confirmer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/db.js"></script>
+    <script src="js/security.js"></script>
+    <script src="js/youtube-api.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
