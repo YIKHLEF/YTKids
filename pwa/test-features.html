@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test des Fonctionnalités - YouTube Kids PWA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #FF5722;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .test-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .test-section h2 {
+            color: #1976D2;
+            margin-bottom: 15px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .status-pending { background: #ccc; }
+        .status-running { background: #FFA726; color: white; }
+        .status-success { background: #4CAF50; color: white; }
+        .status-error { background: #F44336; color: white; }
+
+        button {
+            background: #1976D2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #1565C0;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .result.success {
+            background: #E8F5E9;
+            color: #2E7D32;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .result.error {
+            background: #FFEBEE;
+            color: #C62828;
+            border-left: 4px solid #F44336;
+        }
+
+        .result.info {
+            background: #E3F2FD;
+            color: #1565C0;
+            border-left: 4px solid #2196F3;
+        }
+
+        .result.warning {
+            background: #FFF3E0;
+            color: #E65100;
+            border-left: 4px solid #FF9800;
+        }
+
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .video-preview {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            font-size: 12px;
+        }
+
+        .video-preview img {
+            width: 100%;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+
+        .actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .stat-box {
+            display: inline-block;
+            background: #f5f5f5;
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin: 5px;
+            font-size: 13px;
+        }
+
+        .stat-box strong {
+            color: #FF5722;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test des Fonctionnalités - YouTube Kids PWA</h1>
+        <p class="subtitle">Suite de tests complète pour vérifier toutes les fonctionnalités de l'application</p>
+
+        <!-- Test 1: IndexedDB -->
+        <div class="test-section">
+            <h2>
+                <span id="status-db" class="status-icon status-pending">⏳</span>
+                Test 1: Initialisation IndexedDB
+            </h2>
+            <p>Vérification de l'initialisation de la base de données locale</p>
+            <div class="actions">
+                <button onclick="testIndexedDB()">Tester IndexedDB</button>
+                <button onclick="clearDatabase()">Vider la BDD</button>
+            </div>
+            <div id="result-db"></div>
+        </div>
+
+        <!-- Test 2: PIN Security -->
+        <div class="test-section">
+            <h2>
+                <span id="status-pin" class="status-icon status-pending">⏳</span>
+                Test 2: Système de PIN
+            </h2>
+            <p>Test de création, hachage et vérification du PIN</p>
+            <div class="actions">
+                <button onclick="testPinCreation()">Créer PIN "2021"</button>
+                <button onclick="testPinVerification()">Vérifier PIN "2021"</button>
+                <button onclick="testWrongPin()">Tester mauvais PIN</button>
+                <button onclick="resetPin()">Réinitialiser PIN</button>
+            </div>
+            <div id="result-pin"></div>
+        </div>
+
+        <!-- Test 3: Video Management -->
+        <div class="test-section">
+            <h2>
+                <span id="status-video" class="status-icon status-pending">⏳</span>
+                Test 3: Gestion des Vidéos
+            </h2>
+            <p>Test d'ajout, récupération et suppression de vidéos</p>
+            <div class="actions">
+                <button onclick="addDemoVideos()">Ajouter vidéos de démo</button>
+                <button onclick="listVideos()">Lister les vidéos</button>
+                <button onclick="deleteAllVideos()">Supprimer toutes</button>
+            </div>
+            <div id="result-video"></div>
+        </div>
+
+        <!-- Test 4: YouTube API Integration -->
+        <div class="test-section">
+            <h2>
+                <span id="status-api" class="status-icon status-pending">⏳</span>
+                Test 4: Intégration API YouTube
+            </h2>
+            <p>Test des fonctions de l'API YouTube (extraction d'ID, parsing)</p>
+            <div class="actions">
+                <button onclick="testUrlParsing()">Tester extraction d'URLs</button>
+                <button onclick="testDurationParsing()">Tester parsing durée</button>
+            </div>
+            <div id="result-api"></div>
+        </div>
+
+        <!-- Test 5: Storage -->
+        <div class="test-section">
+            <h2>
+                <span id="status-storage" class="status-icon status-pending">⏳</span>
+                Test 5: Système de Stockage
+            </h2>
+            <p>Test du système de paramètres et stockage local</p>
+            <div class="actions">
+                <button onclick="testSettings()">Tester paramètres</button>
+                <button onclick="testSessionStorage()">Tester sessionStorage</button>
+            </div>
+            <div id="result-storage"></div>
+        </div>
+
+        <!-- Test 6: Service Worker -->
+        <div class="test-section">
+            <h2>
+                <span id="status-sw" class="status-icon status-pending">⏳</span>
+                Test 6: Service Worker
+            </h2>
+            <p>Vérification du Service Worker et du cache</p>
+            <div class="actions">
+                <button onclick="testServiceWorker()">Vérifier SW</button>
+                <button onclick="clearCache()">Vider le cache</button>
+            </div>
+            <div id="result-sw"></div>
+        </div>
+
+        <!-- Run All Tests -->
+        <div class="test-section" style="background: #E3F2FD;">
+            <h2 style="color: #1976D2;">🚀 Exécuter tous les tests</h2>
+            <div class="actions">
+                <button onclick="runAllTests()" style="background: #4CAF50; font-size: 16px; padding: 12px 24px;">
+                    ▶️ Lancer tous les tests
+                </button>
+                <button onclick="resetAllTests()" style="background: #F44336;">
+                    🔄 Réinitialiser
+                </button>
+            </div>
+            <div id="result-all"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/db.js"></script>
+    <script src="js/security.js"></script>
+    <script src="js/youtube-api.js"></script>
+
+    <script>
+        // ============ HELPER FUNCTIONS ============
+
+        function setStatus(testId, status) {
+            const icon = document.getElementById(`status-${testId}`);
+            icon.className = `status-icon status-${status}`;
+            const icons = { pending: '⏳', running: '⏱️', success: '✅', error: '❌' };
+            icon.textContent = icons[status] || '⏳';
+        }
+
+        function showResult(testId, message, type = 'info') {
+            const result = document.getElementById(`result-${testId}`);
+            result.innerHTML = `<div class="result ${type}">${message}</div>`;
+        }
+
+        function addToResult(testId, message, type = 'info') {
+            const result = document.getElementById(`result-${testId}`);
+            result.innerHTML += `<div class="result ${type}">${message}</div>`;
+        }
+
+        // ============ TEST 1: INDEXEDDB ============
+
+        async function testIndexedDB() {
+            setStatus('db', 'running');
+            try {
+                await db.init();
+
+                // Vérifier les stores
+                const stores = Array.from(db.db.objectStoreNames);
+
+                showResult('db', `
+                    <strong>✅ IndexedDB initialisée avec succès!</strong><br>
+                    <span class="stat-box"><strong>DB:</strong> ${db.dbName}</span>
+                    <span class="stat-box"><strong>Version:</strong> ${db.dbVersion}</span><br>
+                    <strong>Stores disponibles:</strong> ${stores.join(', ')}
+                `, 'success');
+
+                setStatus('db', 'success');
+            } catch (error) {
+                showResult('db', `<strong>❌ Erreur:</strong> ${error.message}`, 'error');
+                setStatus('db', 'error');
+            }
+        }
+
+        async function clearDatabase() {
+            try {
+                const confirmation = confirm('Voulez-vous vraiment vider toute la base de données?');
+                if (!confirmation) return;
+
+                await db.init();
+                await db.deleteAllVideos();
+                await db.deleteAllSettings();
+
+                addToResult('db', '<strong>✅ Base de données vidée!</strong>', 'success');
+            } catch (error) {
+                addToResult('db', `<strong>❌ Erreur:</strong> ${error.message}`, 'error');
+            }
+        }
+
+        // ============ TEST 2: PIN SECURITY ============
+
+        async function testPinCreation() {
+            setStatus('pin', 'running');
+            try {
+                await db.init();
+
+                // Supprimer le PIN existant
+                await db.deleteSetting('pin_hash');
+                await db.deleteSetting('pin_salt');
+                await db.deleteSetting('first_launch');
+
+                // Créer nouveau PIN
+                await security.createPin('2021');
+
+                const hash = await db.getSetting('pin_hash');
+                const salt = await db.getSetting('pin_salt');
+
+                showResult('pin', `
+                    <strong>✅ PIN créé avec succès!</strong><br>
+                    <span class="stat-box"><strong>PIN:</strong> 2021</span><br>
+                    <span class="stat-box"><strong>Salt:</strong> ${salt.substring(0, 16)}...</span><br>
+                    <span class="stat-box"><strong>Hash:</strong> ${hash.substring(0, 16)}...</span>
+                `, 'success');
+
+                setStatus('pin', 'success');
+            } catch (error) {
+                showResult('pin', `<strong>❌ Erreur:</strong> ${error.message}`, 'error');
+                setStatus('pin', 'error');
+            }
+        }
+
+        async function testPinVerification() {
+            try {
+                await db.init();
+                const isValid = await security.verifyPin('2021');
+
+                if (isValid) {
+                    addToResult('pin', '<strong>✅ PIN "2021" vérifié avec succès!</strong>', 'success');
+                } else {
+                    addToResult('pin', '<strong>❌ PIN incorrect ou non configuré</strong>', 'error');
+                }
+            } catch (error) {
+                addToResult('pin', `<strong>❌ Erreur:</strong> ${error.message}`, 'error');
+            }
+        }
+
+        async function testWrongPin() {
+            try {
+                await db.init();
+                const isValid = await security.verifyPin('0000');
+
+                if (!isValid) {
+                    addToResult('pin', '<strong>✅ Mauvais PIN correctement rejeté!</strong>', 'success');
+                } else {
+                    addToResult('pin', '<strong>❌ Mauvais PIN accepté (BUG!)</strong>', 'error');
+                }
+            } catch (error) {
+                addToResult('pin', `<strong>❌ Erreur:</strong> ${error.message}`, 'error');
+            }
+        }
+
+        async function resetPin() {
+            try {
+                await db.init();
+                await db.deleteSetting('pin_hash');
+                await db.deleteSetting('pin_salt');
+                await db.deleteSetting('first_launch');
+
+                addToResult('pin', '<strong>✅ PIN réinitialisé!</strong>', 'success');
+            } catch (error) {
+                addToResult('pin', `<strong>❌ Erreur:</strong> ${error.message}`, 'error');
+            }
+        }
+
+        // ============ TEST 3: VIDEO MANAGEMENT ============
+
+        async function addDemoVideos() {
+            setStatus('video', 'running');
+            try {
+                await db.init();
+
+                const demoVideos = [
+                    {
+                        videoId: 'demo1',
+                        title: 'Vidéo de démonstration 1',
+                        thumbnailUrl: 'https://via.placeholder.com/320x180/FF5722/FFFFFF?text=Demo+1',
+                        duration: 245,
+                        sourceType: 'single'
+                    },
+                    {
+                        videoId: 'demo2',
+                        title: 'Vidéo de démonstration 2',
+                        thumbnailUrl: 'https://via.placeholder.com/320x180/4CAF50/FFFFFF?text=Demo+2',
+                        duration: 180,
+                        sourceType: 'single'
+                    },
+                    {
+                        videoId: 'demo3',
+                        title: 'Vidéo de démonstration 3',
+                        thumbnailUrl: 'https://via.placeholder.com/320x180/2196F3/FFFFFF?text=Demo+3',
+                        duration: 320,
+                        sourceType: 'playlist',
+                        playlistId: 'demo_playlist'
+                    }
+                ];
+
+                for (const video of demoVideos) {
+                    try {
+                        await db.addVideo(video);
+                    } catch (e) {
+                        // Vidéo déjà existante, ignorer
+                    }
+                }
+
+                const allVideos = await db.getAllVideos();
+
+                showResult('video', `
+                    <strong>✅ Vidéos de démo ajoutées!</strong><br>
+                    <span class="stat-box"><strong>Total:</strong> ${allVideos.length} vidéos</span>
+                `, 'success');
+
+                setStatus('video', 'success');
+
+                // Afficher les vidéos
+                await listVideos();
+
+            } catch (error) {
+                showResult('video', `<strong>❌ Erreur:</strong> ${error.message}`, 'error');
+                setStatus('video', 'error');
+            }
+        }
+
+        async function listVideos() {
+            try {
+                await db.init();
+                const videos = await db.getAllVideos();
+
+                if (videos.length === 0) {
+                    addToResult('video', '<strong>ℹ️ Aucune vidéo dans la base</strong>', 'info');
+                    return;
+                }
+
+                let html = `<strong>📹 ${videos.length} vidéo(s) trouvée(s):</strong><div class="test-grid">`;
+
+                videos.forEach(video => {
+                    const duration = youtubeAPI.formatDuration(video.duration);
+                    html += `
+                        <div class="video-preview">
+                            <img src="${video.thumbnailUrl}" alt="${video.title}">
+                            <strong>${video.title}</strong><br>
+                            <small>ID: ${video.videoId}</small><br>
+                            <small>Durée: ${duration}</small><br>
+                            <small>Type: ${video.sourceType}</small>
+                        </div>
+                    `;
+                });
+
+                html += '</div>';
+
+                addToResult('video', html, 'success');
+            } catch (error) {
+                addToResult('video', `<strong>❌ Erreur:</strong> ${error.message}`, 'error');
+            }
+        }
+
+        async function deleteAllVideos() {
+            try {
+                const confirmation = confirm('Supprimer toutes les vidéos?');
+                if (!confirmation) return;
+
+                await db.init();
+                await db.deleteAllVideos();
+
+                addToResult('video', '<strong>✅ Toutes les vidéos supprimées!</strong>', 'success');
+            } catch (error) {
+                addToResult('video', `<strong>❌ Erreur:</strong> ${error.message}`, 'error');
+            }
+        }
+
+        // ============ TEST 4: YOUTUBE API ============
+
+        async function testUrlParsing() {
+            setStatus('api', 'running');
+
+            const testUrls = [
+                { url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', expected: 'dQw4w9WgXcQ' },
+                { url: 'https://youtu.be/dQw4w9WgXcQ', expected: 'dQw4w9WgXcQ' },
+                { url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', expected: 'dQw4w9WgXcQ' },
+                { url: 'https://www.youtube.com/watch?v=ABC&list=PLxyz', expected: 'ABC', playlist: 'PLxyz' }
+            ];
+
+            let results = '<strong>🔍 Test d\'extraction d\'ID YouTube:</strong><br><br>';
+            let allPassed = true;
+
+            testUrls.forEach(test => {
+                const videoId = youtubeAPI.extractVideoId(test.url);
+                const passed = videoId === test.expected;
+                allPassed = allPassed && passed;
+
+                results += `${passed ? '✅' : '❌'} <code>${test.url}</code><br>`;
+                results += `   → ID: <code>${videoId}</code> ${passed ? '(OK)' : '(ERREUR)'}<br><br>`;
+
+                if (test.playlist) {
+                    const playlistId = youtubeAPI.extractPlaylistId(test.url);
+                    const playlistPassed = playlistId === test.playlist;
+                    results += `   → Playlist: <code>${playlistId}</code> ${playlistPassed ? '(OK)' : '(ERREUR)'}<br><br>`;
+                }
+            });
+
+            showResult('api', results, allPassed ? 'success' : 'error');
+            setStatus('api', allPassed ? 'success' : 'error');
+        }
+
+        async function testDurationParsing() {
+            const testDurations = [
+                { iso: 'PT4M13S', expected: 253, formatted: '4:13' },
+                { iso: 'PT1H2M30S', expected: 3750, formatted: '1:02:30' },
+                { iso: 'PT45S', expected: 45, formatted: '0:45' },
+                { iso: 'PT10M', expected: 600, formatted: '10:00' }
+            ];
+
+            let results = '<strong>⏱️ Test de parsing de durée:</strong><br><br>';
+            let allPassed = true;
+
+            testDurations.forEach(test => {
+                const seconds = youtubeAPI.parseDuration(test.iso);
+                const formatted = youtubeAPI.formatDuration(seconds);
+                const passed = seconds === test.expected && formatted === test.formatted;
+                allPassed = allPassed && passed;
+
+                results += `${passed ? '✅' : '❌'} <code>${test.iso}</code><br>`;
+                results += `   → ${seconds}s = ${formatted} ${passed ? '(OK)' : '(ERREUR)'}<br><br>`;
+            });
+
+            addToResult('api', results, allPassed ? 'success' : 'error');
+        }
+
+        // ============ TEST 5: STORAGE ============
+
+        async function testSettings() {
+            setStatus('storage', 'running');
+            try {
+                await db.init();
+
+                // Test écriture/lecture
+                await db.setSetting('test_key', 'test_value');
+                const value = await db.getSetting('test_key');
+
+                if (value === 'test_value') {
+                    showResult('storage', '<strong>✅ Système de paramètres fonctionnel!</strong>', 'success');
+                    setStatus('storage', 'success');
+                } else {
+                    showResult('storage', '<strong>❌ Erreur de lecture/écriture</strong>', 'error');
+                    setStatus('storage', 'error');
+                }
+
+                // Nettoyer
+                await db.deleteSetting('test_key');
+
+            } catch (error) {
+                showResult('storage', `<strong>❌ Erreur:</strong> ${error.message}`, 'error');
+                setStatus('storage', 'error');
+            }
+        }
+
+        async function testSessionStorage() {
+            try {
+                // Test sessionStorage
+                const testData = {
+                    videoId: 'test123',
+                    title: 'Test Video',
+                    duration: 100
+                };
+
+                sessionStorage.setItem('testVideo', JSON.stringify(testData));
+                const retrieved = JSON.parse(sessionStorage.getItem('testVideo'));
+
+                if (retrieved.videoId === 'test123') {
+                    addToResult('storage', '<strong>✅ SessionStorage fonctionnel!</strong>', 'success');
+                } else {
+                    addToResult('storage', '<strong>❌ Erreur SessionStorage</strong>', 'error');
+                }
+
+                sessionStorage.removeItem('testVideo');
+
+            } catch (error) {
+                addToResult('storage', `<strong>❌ Erreur:</strong> ${error.message}`, 'error');
+            }
+        }
+
+        // ============ TEST 6: SERVICE WORKER ============
+
+        async function testServiceWorker() {
+            setStatus('sw', 'running');
+
+            if ('serviceWorker' in navigator) {
+                try {
+                    const registration = await navigator.serviceWorker.getRegistration();
+
+                    if (registration) {
+                        showResult('sw', `
+                            <strong>✅ Service Worker enregistré!</strong><br>
+                            <span class="stat-box"><strong>Scope:</strong> ${registration.scope}</span><br>
+                            <span class="stat-box"><strong>État:</strong> ${registration.active ? 'Actif' : 'Inactif'}</span>
+                        `, 'success');
+                        setStatus('sw', 'success');
+                    } else {
+                        showResult('sw', '<strong>⚠️ Service Worker non enregistré</strong>', 'warning');
+                        setStatus('sw', 'error');
+                    }
+                } catch (error) {
+                    showResult('sw', `<strong>❌ Erreur:</strong> ${error.message}`, 'error');
+                    setStatus('sw', 'error');
+                }
+            } else {
+                showResult('sw', '<strong>❌ Service Worker non supporté</strong>', 'error');
+                setStatus('sw', 'error');
+            }
+        }
+
+        async function clearCache() {
+            try {
+                const cacheNames = await caches.keys();
+
+                for (const cacheName of cacheNames) {
+                    await caches.delete(cacheName);
+                }
+
+                addToResult('sw', `<strong>✅ ${cacheNames.length} cache(s) supprimé(s)!</strong>`, 'success');
+            } catch (error) {
+                addToResult('sw', `<strong>❌ Erreur:</strong> ${error.message}`, 'error');
+            }
+        }
+
+        // ============ RUN ALL TESTS ============
+
+        async function runAllTests() {
+            document.getElementById('result-all').innerHTML = '<div class="result info"><strong>🚀 Exécution de tous les tests...</strong></div>';
+
+            await testIndexedDB();
+            await new Promise(r => setTimeout(r, 500));
+
+            await testPinCreation();
+            await new Promise(r => setTimeout(r, 500));
+
+            await testPinVerification();
+            await new Promise(r => setTimeout(r, 500));
+
+            await addDemoVideos();
+            await new Promise(r => setTimeout(r, 500));
+
+            await testUrlParsing();
+            await new Promise(r => setTimeout(r, 500));
+
+            await testDurationParsing();
+            await new Promise(r => setTimeout(r, 500));
+
+            await testSettings();
+            await new Promise(r => setTimeout(r, 500));
+
+            await testSessionStorage();
+            await new Promise(r => setTimeout(r, 500));
+
+            await testServiceWorker();
+
+            document.getElementById('result-all').innerHTML = '<div class="result success"><strong>✅ Tous les tests terminés!</strong></div>';
+        }
+
+        async function resetAllTests() {
+            const tests = ['db', 'pin', 'video', 'api', 'storage', 'sw'];
+            tests.forEach(test => {
+                setStatus(test, 'pending');
+                document.getElementById(`result-${test}`).innerHTML = '';
+            });
+            document.getElementById('result-all').innerHTML = '';
+        }
+
+        // ============ AUTO RUN ON LOAD ============
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            console.log('Page de test chargée');
+            // Auto-initialiser la BDD
+            try {
+                await db.init();
+                console.log('DB initialisée automatiquement');
+            } catch (e) {
+                console.error('Erreur init DB:', e);
+            }
+        });
+    </script>
+</body>
+</html>
