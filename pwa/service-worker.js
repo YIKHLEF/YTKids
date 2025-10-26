@@ -1,4 +1,4 @@
-const CACHE_NAME = 'youtube-kids-v1';
+const CACHE_NAME = 'youtube-kids-v2';
 const urlsToCache = [
   './',
   './index.html',
@@ -6,6 +6,8 @@ const urlsToCache = [
   './player.html',
   './css/style.css',
   './js/app.js',
+  './js/admin.js',
+  './js/player.js',
   './js/db.js',
   './js/security.js',
   './js/youtube-api.js'
