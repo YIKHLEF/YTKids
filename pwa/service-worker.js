@@ -1,14 +1,14 @@
 const CACHE_NAME = 'youtube-kids-v1';
 const urlsToCache = [
-  '/pwa/',
-  '/pwa/index.html',
-  '/pwa/admin.html',
-  '/pwa/player.html',
-  '/pwa/css/style.css',
-  '/pwa/js/app.js',
-  '/pwa/js/db.js',
-  '/pwa/js/security.js',
-  '/pwa/js/youtube-api.js'
+  './',
+  './index.html',
+  './admin.html',
+  './player.html',
+  './css/style.css',
+  './js/app.js',
+  './js/db.js',
+  './js/security.js',
+  './js/youtube-api.js'
 ];
 
 // Installation du Service Worker
@@ -76,7 +76,7 @@ self.addEventListener('fetch', event => {
       })
       .catch(() => {
         // Page offline de fallback
-        return caches.match('/pwa/index.html');
+        return caches.match('./index.html');
       })
   );
 });

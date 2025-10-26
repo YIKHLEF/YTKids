@@ -2,7 +2,7 @@
   "name": "YouTube Kids - Safe Video Player",
   "short_name": "YT Kids",
   "description": "Une application sécurisée pour que les enfants regardent des vidéos YouTube présélectionnées par les parents",
-  "start_url": "/pwa/index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#F5F5F5",
   "theme_color": "#FF5722",
@@ -64,7 +64,7 @@
       "name": "Administration",
       "short_name": "Admin",
       "description": "Accéder à l'interface d'administration",
-      "url": "/pwa/admin.html",
+      "url": "./admin.html",
       "icons": [{ "src": "icons/icon-96x96.png", "sizes": "96x96" }]
     }
   ]
