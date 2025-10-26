@@ -1,292 +1,349 @@
-# YouTube Kids - Application Android Personnalisée
+# 📱 YouTube Kids PWA - Progressive Web App
 
-Une application Android native permettant aux parents de créer un environnement YouTube sécurisé pour leurs enfants, en affichant uniquement des vidéos présélectionnées.
+Une application web progressive (PWA) permettant aux parents de créer un environnement YouTube sécurisé pour leurs enfants.
 
-## 📱 Caractéristiques Principales
+## ✨ Caractéristiques
 
-- **Interface Enfant Colorée et Intuitive** : Grandes vignettes avec images de prévisualisation
-- **Lecture Sécurisée** : Uniquement les vidéos présélectionnées par les parents
-- **Gestion Locale** : Aucun compte utilisateur requis, stockage local
-- **Protection par Code PIN** : Interface d'administration protégée
-- **Support des Playlists** : Ajout de vidéos individuelles ou de playlists complètes
+- ✅ **PWA Complète** : Installable sur tous les appareils (Android, iOS, Desktop)
+- ✅ **Interface Enfant** : Colorée, intuitive et sécurisée
+- ✅ **Protection PIN** : Code à 4 chiffres avec hashage SHA-256
+- ✅ **Hors Ligne** : Fonctionne même sans connexion (après installation)
+- ✅ **Ajout de Vidéos** : Vidéos individuelles et playlists YouTube
+- ✅ **Stockage Local** : Toutes les données restent sur l'appareil (IndexedDB)
+- ✅ **Pas d'APK** : Aucune compilation nécessaire, juste un serveur web !
 
-## 🛠️ Technologies Utilisées
+## 🚀 Installation Rapide
 
-- **Langage** : Kotlin
-- **Architecture** : MVVM (Model-View-ViewModel)
-- **Base de données** : Room (SQLite)
-- **API** : YouTube Data API v3
-- **Player** : Android YouTube Player
-- **Chargement d'images** : Glide
-- **Networking** : Retrofit + OkHttp
-- **Asynchrone** : Kotlin Coroutines + Flow
+### Option 1 : Serveur Web Local
 
-## 📋 Prérequis
-
-### Environnement de Développement
-
-- Android Studio Giraffe (2022.3.1) ou plus récent
-- JDK 17
-- Android SDK
-  - SDK minimum : API 24 (Android 7.0)
-  - SDK cible : API 34 (Android 14)
-
-### Clé API YouTube
-
-1. Créer un projet sur [Google Cloud Console](https://console.cloud.google.com/)
-2. Activer **YouTube Data API v3**
-3. Créer des identifiants → Clé API
-4. Copier la clé API
-
-## 🚀 Installation et Configuration
-
-### 1. Cloner le Projet
+**Avec Python (le plus simple) :**
 
 ```bash
-git clone <repository-url>
-cd YTKids
+# Python 3
+cd pwa
+python -m http.server 8000
+
+# Puis ouvrir : http://localhost:8000
 ```
 
-### 2. Configurer la Clé API YouTube
+**Avec Node.js :**
 
-Ouvrir le fichier `local.properties` à la racine du projet et ajouter :
-
-```properties
-YOUTUBE_API_KEY=VOTRE_CLE_API_ICI
-```
-
-**Important** : Ne jamais commiter ce fichier dans Git !
-
-### 3. Synchroniser le Projet
-
-- Ouvrir le projet dans Android Studio
-- Laisser Gradle synchroniser automatiquement
-- Attendre la fin du téléchargement des dépendances
-
-### 4. Compiler et Exécuter
-
-**Via Android Studio** :
-- Connecter un appareil Android ou lancer un émulateur
-- Cliquer sur Run (▶️)
-
-**Via Ligne de Commande** :
 ```bash
-./gradlew assembleDebug
-./gradlew installDebug
+# Installer http-server globalement
+npm install -g http-server
+
+# Lancer le serveur
+cd pwa
+http-server -p 8000
+
+# Puis ouvrir : http://localhost:8000
 ```
 
-## 📖 Guide d'Utilisation
+**Avec PHP :**
+
+```bash
+cd pwa
+php -S localhost:8000
+
+# Puis ouvrir : http://localhost:8000
+```
+
+### Option 2 : Déploiement en Ligne
+
+**GitHub Pages (Gratuit) :**
+
+1. Créer un repo GitHub
+2. Pousser le dossier `pwa` dans le repo
+3. Activer GitHub Pages dans Settings → Pages
+4. Votre app sera disponible sur : `https://username.github.io/repo-name/`
+
+**Netlify (Gratuit) :**
+
+1. Créer un compte sur [netlify.com](https://netlify.com)
+2. Glisser-déposer le dossier `pwa`
+3. Votre app est en ligne instantanément !
+
+**Vercel (Gratuit) :**
+
+1. Installer Vercel CLI : `npm i -g vercel`
+2. Dans le dossier `pwa` : `vercel`
+3. Suivre les instructions
+
+## 🔑 Configuration de la Clé API YouTube
+
+**IMPORTANT :** Vous devez configurer votre clé API YouTube avant d'utiliser l'application.
+
+### Étape 1 : Obtenir une Clé API
+
+1. Aller sur [Google Cloud Console](https://console.cloud.google.com/)
+2. Créer un projet (ou sélectionner un existant)
+3. Activer l'API : **YouTube Data API v3**
+   - Menu → APIs & Services → Library
+   - Rechercher "YouTube Data API v3"
+   - Cliquer sur **Enable**
+4. Créer une clé API :
+   - Menu → APIs & Services → Credentials
+   - **+ Create Credentials** → **API Key**
+   - Copier la clé générée
+
+### Étape 2 : Configurer la Clé
+
+Ouvrir le fichier `js/youtube-api.js` et remplacer :
+
+```javascript
+this.API_KEY = 'YOUR_YOUTUBE_API_KEY_HERE';
+```
+
+Par :
+
+```javascript
+this.API_KEY = 'VotreCléAPIIci';
+```
+
+**Important :** Ne committez jamais votre clé API dans un repo public !
+
+## 📱 Installer l'App sur Mobile
+
+### Sur Android (Chrome)
+
+1. Ouvrir l'app dans Chrome
+2. Menu ⋮ → **Ajouter à l'écran d'accueil**
+3. Ou cliquer sur le bouton "Installer l'application" qui apparaît
+
+### Sur iOS (Safari)
+
+1. Ouvrir l'app dans Safari
+2. Bouton Partager 􀈂
+3. **Sur l'écran d'accueil**
+4. L'app s'ajoute comme une app native
+
+### Sur Desktop (Chrome, Edge)
+
+1. Ouvrir l'app dans le navigateur
+2. Icône d'installation dans la barre d'adresse (ou bouton "Installer")
+3. Cliquer sur **Installer**
+
+## 🎯 Utilisation
 
 ### Premier Lancement
 
-1. **Création du Code PIN**
-   - Au premier lancement, l'app demandera de créer un code PIN à 4 chiffres
-   - Entrer le code deux fois pour confirmation
-   - **Important** : Mémoriser ce code, il protège l'accès admin
-
-2. **Ajouter des Vidéos**
-   - L'interface admin s'ouvre automatiquement
-   - Cliquer sur le bouton **+** (en bas à droite)
-   - Coller un lien YouTube (vidéo ou playlist)
-   - La vidéo sera automatiquement ajoutée
+1. **Créer un PIN** : Code à 4 chiffres pour protéger l'accès admin
+2. **Interface Admin** : S'ouvre automatiquement
+3. **Ajouter des vidéos** : Cliquer sur le bouton +
+4. **Coller un lien YouTube** : Vidéo ou playlist
+5. **Confirmation** : La vidéo s'ajoute automatiquement
 
 ### Interface Enfant
 
-- **Affichage** : Grille de vidéos avec grandes vignettes colorées
-- **Lire une Vidéo** : Taper sur une vignette
-- **Navigation** : Bouton "Retour" pour revenir à la grille
-- **Accès Admin** : Appui long (3 secondes) sur le coin supérieur droit
+- **Voir les vidéos** : Grille colorée avec vignettes
+- **Lire une vidéo** : Taper sur une vignette
+- **Retour** : Bouton ← en haut à gauche
 
-### Interface Admin (Protégée par PIN)
+### Accès Admin
 
-#### Accéder à l'Administration
+- **Appui long (3 secondes)** sur le coin supérieur droit
+- **Entrer le PIN**
+- **Interface admin** s'ouvre
 
-1. Depuis l'écran principal, appuyer longtemps (3 secondes) sur le coin supérieur droit
-2. Entrer le code PIN à 4 chiffres
-3. L'interface admin s'ouvre
+### Gestion des Vidéos
 
-#### Ajouter une Vidéo
+- **Ajouter** : Bouton + flottant en bas à droite
+- **Supprimer** : Icône 🗑️ sur chaque vidéo
+- **Retour** : Flèche ← en haut à gauche
 
-1. Cliquer sur le bouton **+** (FAB en bas à droite)
-2. Coller le lien YouTube dans le champ :
-   - **Vidéo unique** : `https://www.youtube.com/watch?v=VIDEO_ID`
-   - **Vidéo courte** : `https://youtu.be/VIDEO_ID`
-   - **Playlist** : `https://www.youtube.com/playlist?list=PLAYLIST_ID`
-3. Cliquer sur **Ajouter**
-4. La vidéo (ou toutes les vidéos de la playlist) sera ajoutée
-
-#### Supprimer une Vidéo
-
-1. Dans la liste admin, cliquer sur l'icône **Poubelle** (🗑️)
-2. Confirmer la suppression
-
-## 🎨 Structure du Projet
+## 🗂️ Structure du Projet
 
 ```
-app/
-├── src/main/
-│   ├── java/com/youtubekids/app/
-│   │   ├── data/
-│   │   │   ├── local/              # Base de données Room
-│   │   │   │   ├── dao/            # Data Access Objects
-│   │   │   │   ├── entities/       # Entités de la BD
-│   │   │   │   └── AppDatabase.kt
-│   │   │   ├── remote/             # API YouTube
-│   │   │   │   ├── models/         # Modèles de réponse API
-│   │   │   │   └── YouTubeApiService.kt
-│   │   │   └── repository/         # Repository pattern
-│   │   ├── ui/
-│   │   │   ├── main/               # Écran principal (enfant)
-│   │   │   ├── player/             # Lecteur vidéo
-│   │   │   └── admin/              # Interface admin
-│   │   └── utils/                  # Utilitaires
-│   └── res/
-│       ├── layout/                 # Fichiers XML des layouts
-│       ├── values/                 # Strings, colors, themes
-│       └── xml/                    # Configurations
-└── build.gradle.kts
+pwa/
+├── index.html              # Interface enfant (page principale)
+├── admin.html              # Interface d'administration
+├── player.html             # Lecteur vidéo
+├── manifest.json           # Configuration PWA
+├── service-worker.js       # Service Worker (offline + cache)
+├── css/
+│   └── style.css          # Styles de l'application
+├── js/
+│   ├── app.js             # Logique interface enfant
+│   ├── admin.js           # Logique interface admin
+│   ├── player.js          # Logique lecteur vidéo
+│   ├── db.js              # Gestion IndexedDB
+│   ├── security.js        # Gestion PIN (SHA-256)
+│   └── youtube-api.js     # API YouTube Data v3
+├── icons/                 # Icônes de l'app (à créer)
+└── README.md             # Ce fichier
 ```
 
-## 🔒 Sécurité et Confidentialité
+## 🎨 Créer les Icônes
 
-### Protection des Données
+Les icônes sont référencées dans `manifest.json` mais doivent être créées.
 
-- **Stockage Local** : Toutes les données sont stockées localement sur l'appareil
-- **Pas de Compte** : Aucune connexion à un compte externe
-- **Code PIN Sécurisé** : Hashage SHA-256 avec salt aléatoire
-- **Backup Exclu** : Les données sensibles ne sont pas sauvegardées dans le cloud
+**Tailles nécessaires :**
+- 72x72
+- 96x96
+- 128x128
+- 144x144
+- 152x152
+- 192x192
+- 384x384
+- 512x512
 
-### Protection des Enfants
+**Outils recommandés :**
+- [Favicon Generator](https://realfavicongenerator.net/)
+- [PWA Asset Generator](https://github.com/elegantapp/pwa-asset-generator)
 
-- **Pas de Navigation Externe** : Impossible d'accéder à YouTube.com
-- **Pas de Suggestions** : Désactivation des suggestions de vidéos YouTube
-- **Pas de Commentaires** : Les commentaires ne sont pas visibles
-- **Pas de Partage** : Fonction de partage désactivée
+Ou utiliser une image simple et la redimensionner en ligne :
+- [ResizeImage.net](https://resizeimage.net/)
 
-## ⚙️ Configuration Avancée
+## 🔧 Développement
 
-### Modes d'Affichage
-
-L'application supporte différents modes d'affichage (modifiable dans le code) :
-- **Grille 2x2** : 2 colonnes (par défaut sur smartphone)
-- **Grille 3x3** : 3 colonnes (recommandé pour tablettes)
-- **Liste** : Affichage en liste verticale
-
-Pour changer le mode, modifier dans `MainActivity.kt` :
-```kotlin
-GridLayoutManager(this@MainActivity, 2) // Changer le 2
-```
-
-### Personnalisation des Couleurs
-
-Modifier les couleurs dans `res/values/colors.xml` :
-```xml
-<color name="primary">#FF5722</color>      <!-- Orange vif -->
-<color name="accent">#4CAF50</color>        <!-- Vert -->
-```
-
-## 🐛 Résolution de Problèmes
-
-### Erreur : "API Key not found"
-
-**Solution** : Vérifier que `YOUTUBE_API_KEY` est bien définie dans `local.properties`
-
-### Erreur : "Quota exceeded"
-
-**Cause** : Limite de 10,000 requêtes/jour atteinte
-
-**Solution** : Attendre le lendemain ou créer un nouveau projet Google Cloud
-
-### Vidéos ne se chargent pas
-
-**Solutions** :
-1. Vérifier la connexion Internet
-2. Vérifier que la vidéo n'est pas privée/supprimée
-3. Vérifier la clé API YouTube
-
-### Code PIN oublié
-
-**Solution** :
-1. Aller dans les paramètres Android → Applications
-2. Trouver "YouTube Kids"
-3. Cliquer sur "Stockage" → "Effacer les données"
-4. **Attention** : Cela supprimera toutes les vidéos ajoutées !
-
-## 📦 Génération de l'APK
-
-### APK Debug (pour tests)
+### Tester en Local
 
 ```bash
-./gradlew assembleDebug
+cd pwa
+python -m http.server 8000
+# Ouvrir http://localhost:8000
 ```
 
-L'APK sera généré dans : `app/build/outputs/apk/debug/app-debug.apk`
+### Déboguer
 
-### APK Release (pour distribution)
+- **Chrome DevTools** : F12 → Console
+- **Application Tab** : Voir le Service Worker, IndexedDB, Manifest
+- **Lighthouse** : Auditer la PWA
 
-1. Créer un keystore :
-```bash
-keytool -genkey -v -keystore my-release-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias my-alias
-```
+### Désinstaller le Service Worker
 
-2. Configurer dans `app/build.gradle.kts` :
-```kotlin
-android {
-    signingConfigs {
-        create("release") {
-            storeFile = file("path/to/my-release-key.jks")
-            storePassword = "password"
-            keyAlias = "my-alias"
-            keyPassword = "password"
-        }
-    }
-    buildTypes {
-        release {
-            signingConfig = signingConfigs.getByName("release")
-        }
-    }
+Si vous avez des problèmes de cache :
+
+1. F12 → Application → Service Workers
+2. **Unregister**
+3. Rafraîchir la page (Ctrl+Shift+R)
+
+## 📊 Avantages vs App Android Native
+
+| Critère | PWA | App Android Native |
+|---------|-----|-------------------|
+| Installation | ✅ Instantanée (1 clic) | ❌ Téléchargement APK |
+| Taille | ✅ ~500 KB | ❌ ~15-20 MB |
+| Mises à jour | ✅ Automatiques | ❌ Manuelles |
+| Compatibilité | ✅ Android + iOS + Desktop | ❌ Android uniquement |
+| Compilation | ✅ Aucune | ❌ Android Studio requis |
+| Distribution | ✅ Simple lien web | ❌ Fichier APK à transférer |
+| Développement | ✅ HTML/CSS/JS simple | ❌ Kotlin/Java complexe |
+
+## ⚠️ Limitations
+
+- **Connexion Internet** requise pour :
+  - Ajouter des vidéos (récupération métadonnées)
+  - Lire les vidéos (streaming YouTube)
+- **Quota API YouTube** : 10,000 requêtes/jour (gratuit)
+- **Stockage** : Limité par IndexedDB du navigateur (généralement >50 MB)
+- **Notifications** : Non implémentées (possible en ajout futur)
+
+## 🛠️ Personnalisation
+
+### Changer les Couleurs
+
+Modifier `css/style.css` :
+
+```css
+:root {
+    --color-primary: #FF5722;  /* Couleur principale */
+    --color-accent: #4CAF50;   /* Couleur accent */
+    /* ... */
 }
 ```
 
-3. Générer l'APK :
-```bash
-./gradlew assembleRelease
+### Modifier le Nom de l'App
+
+Dans `manifest.json` :
+
+```json
+{
+  "name": "Votre Nom d'App",
+  "short_name": "App Name",
+  ...
+}
 ```
 
-## 🔄 Mises à Jour Futures
+### Changer le Délai d'Accès Admin
 
-### Fonctionnalités Prévues
+Dans `js/app.js` :
 
-- [ ] Support multilingue (FR/EN)
-- [ ] Catégories de vidéos
-- [ ] Vidéos favorites
-- [ ] Statistiques de visionnage
-- [ ] Import/Export de liste de vidéos
-- [ ] Mode sombre
-- [ ] Support des formats verticaux (Shorts)
+```javascript
+longPressTimer = setTimeout(() => {
+    // ...
+}, 3000); // 3 secondes → modifier ce nombre
+```
 
-## 📄 Licence
+## 📱 Compatibilité
 
-Ce projet est développé pour un usage personnel et éducatif.
+| Navigateur | Support | Installation PWA |
+|------------|---------|------------------|
+| Chrome (Android) | ✅ Complet | ✅ |
+| Safari (iOS) | ✅ Complet | ✅ |
+| Edge | ✅ Complet | ✅ |
+| Firefox | ⚠️ Partiel | ❌ |
+| Samsung Internet | ✅ Complet | ✅ |
 
-**Important** :
-- Respecter les [Conditions d'Utilisation de YouTube](https://www.youtube.com/t/terms)
-- Ne pas télécharger les vidéos (violation des CGU)
-- Usage personnel uniquement
+## 🐛 Résolution de Problèmes
 
-## 👨‍💻 Support et Contact
+### "Failed to fetch" lors de l'ajout de vidéos
 
-Pour toute question ou problème :
-- Ouvrir une issue sur GitHub
-- Consulter la documentation YouTube Data API : https://developers.google.com/youtube/v3
+**Cause** : Clé API YouTube non configurée ou invalide
 
-## 🙏 Remerciements
+**Solution** :
+1. Vérifier `js/youtube-api.js`
+2. Remplacer `YOUR_YOUTUBE_API_KEY_HERE` par votre vraie clé
 
-- **YouTube Data API v3** : Récupération des métadonnées
-- **PierfrancescoSoffritti/android-youtube-player** : Lecteur YouTube
-- **Bumptech/Glide** : Chargement d'images
-- **Square/Retrofit** : Client HTTP
+### L'app ne s'installe pas
+
+**Solution** :
+1. Vérifier que vous êtes en HTTPS (ou localhost)
+2. Vérifier que `manifest.json` est accessible
+3. Vérifier que le Service Worker est enregistré (F12 → Application)
+
+### Les vidéos ne se chargent pas
+
+**Solution** :
+1. Vérifier la connexion Internet
+2. Ouvrir la console (F12) pour voir les erreurs
+3. Vérifier que la clé API YouTube est valide
+
+### Le PIN ne fonctionne pas
+
+**Solution** :
+1. Effacer les données du site :
+   - F12 → Application → Storage → Clear site data
+2. Recharger la page
+3. Créer un nouveau PIN
+
+## 🎉 Avantages de la PWA
+
+✅ **Aucune compilation** nécessaire
+✅ **Fonctionne sur TOUS les appareils**
+✅ **Déploiement instantané**
+✅ **Mises à jour automatiques**
+✅ **Léger et rapide**
+✅ **Pas de dépendance Android Studio**
+✅ **Pas de problèmes de versions Gradle/Java**
+✅ **Simple à développer et maintenir**
+
+## 📞 Support
+
+Pour toute question :
+- Ouvrir la console du navigateur (F12)
+- Vérifier les messages d'erreur
+- Consulter la documentation YouTube API
 
 ---
 
-**Développé avec ❤️ pour créer un environnement YouTube sûr pour les enfants**
+**Développé avec ❤️ pour les enfants**
+
+**Technologies utilisées :**
+- HTML5
+- CSS3
+- JavaScript ES6+
+- IndexedDB
+- Service Workers
+- YouTube IFrame API
+- YouTube Data API v3
