@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Initialisation PIN - YouTube Kids</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #FF5722;
+            margin-bottom: 20px;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        button {
+            background: #FF5722;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #E64A19;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Initialisation du PIN</h1>
+
+        <div class="info">
+            <strong>Cette page permet de configurer le PIN administrateur.</strong><br>
+            Par défaut, le PIN sera défini à <strong>2021</strong>.
+        </div>
+
+        <div id="status"></div>
+
+        <button id="init-btn" onclick="initializePin()">Configurer PIN à 2021</button>
+        <button onclick="window.location.href='index.html'">Retour à l'accueil</button>
+    </div>
+
+    <script src="js/db.js"></script>
+    <script src="js/security.js"></script>
+    <script>
+        async function initializePin() {
+            const statusDiv = document.getElementById('status');
+            const initBtn = document.getElementById('init-btn');
+
+            try {
+                initBtn.disabled = true;
+                statusDiv.innerHTML = '<div class="info">Initialisation en cours...</div>';
+
+                // Initialiser la base de données
+                await db.init();
+
+                // Vérifier si un PIN existe déjà
+                const isPinConfigured = await security.isPinConfigured();
+
+                if (isPinConfigured) {
+                    const confirm = window.confirm(
+                        'Un PIN existe déjà. Voulez-vous le remplacer par 2021 ?'
+                    );
+                    if (!confirm) {
+                        statusDiv.innerHTML = '<div class="info">Opération annulée.</div>';
+                        initBtn.disabled = false;
+                        return;
+                    }
+                }
+
+                // Créer le PIN 2021
+                await security.createPin('2021');
+
+                statusDiv.innerHTML = `
+                    <div class="success">
+                        <strong>✅ PIN configuré avec succès !</strong><br><br>
+                        Votre PIN administrateur est maintenant : <strong>2021</strong><br><br>
+                        Vous pouvez maintenant accéder au panneau d'administration :
+                        <ul>
+                            <li>Sur l'écran principal, appuyez longuement (3 secondes) dans le coin supérieur droit</li>
+                            <li>Ou accédez directement à <a href="admin.html">admin.html</a></li>
+                        </ul>
+                    </div>
+                `;
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                statusDiv.innerHTML = `
+                    <div class="error">
+                        <strong>❌ Erreur</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+                initBtn.disabled = false;
+            }
+        }
+
+        // Vérifier le statut au chargement
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                await db.init();
+                const isPinConfigured = await security.isPinConfigured();
+                const statusDiv = document.getElementById('status');
+
+                if (isPinConfigured) {
+                    statusDiv.innerHTML = `
+                        <div class="info">
+                            ℹ️ Un PIN est déjà configuré. Cliquez sur le bouton pour le remplacer par 2021.
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Erreur lors de la vérification:', error);
+            }
+        });
+    </script>
+</body>
+</html>
