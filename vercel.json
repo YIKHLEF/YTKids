@@ -1,29 +1,10 @@
 {
-  "version": 2,
-  "name": "youtube-kids-pwa",
-  "builds": [
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
-    }
-  ],
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/$1"
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
     }
   ],
-  "env": {
-    "NODE_ENV": "production"
-  },
   "headers": [
     {
       "source": "/(.*)",
@@ -53,4 +34,3 @@
     }
   ]
 }
-

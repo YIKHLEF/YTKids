@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug - YouTube Kids</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #FF0000;
+            border-bottom: 3px solid #FF0000;
+            padding-bottom: 10px;
+        }
+        .section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .test-item {
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #ddd;
+            background: #f9f9f9;
+        }
+        .success {
+            border-left-color: #4CAF50;
+            background: #E8F5E9;
+        }
+        .error {
+            border-left-color: #F44336;
+            background: #FFEBEE;
+        }
+        .warning {
+            border-left-color: #FF9800;
+            background: #FFF3E0;
+        }
+        button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #1976D2;
+        }
+        .link-button {
+            display: inline-block;
+            background: #FF0000;
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            margin: 5px;
+        }
+        .link-button:hover {
+            background: #D50000;
+        }
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        pre {
+            background: #263238;
+            color: #fff;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Page de Debug - YouTube Kids</h1>
+
+    <div class="section">
+        <h2>📋 Navigation Rapide</h2>
+        <a href="index.html" class="link-button">🏠 Accueil</a>
+        <a href="admin.html" class="link-button">⚙️ Admin</a>
+        <a href="init-pin.html" class="link-button">🔑 Config PIN</a>
+        <a href="test-features.html" class="link-button">🧪 Tests</a>
+    </div>
+
+    <div class="section">
+        <h2>✅ Tests Automatiques</h2>
+        <div id="tests-results"></div>
+        <button onclick="runAllTests()">▶️ Lancer tous les tests</button>
+    </div>
+
+    <div class="section">
+        <h2>🌐 Informations Environnement</h2>
+        <div id="env-info"></div>
+    </div>
+
+    <div class="section">
+        <h2>🎨 Test CSS</h2>
+        <div id="css-test"></div>
+    </div>
+
+    <div class="section">
+        <h2>📡 Test API YouTube</h2>
+        <div id="api-test"></div>
+        <button onclick="testAPIConnection()">Tester la connexion API</button>
+    </div>
+
+    <script src="js/db.js"></script>
+    <script src="js/security.js"></script>
+    <script src="js/youtube-api.js"></script>
+
+    <script>
+        // Afficher les informations d'environnement
+        function showEnvironmentInfo() {
+            const envInfo = document.getElementById('env-info');
+            const hostname = window.location.hostname;
+            const isProduction = hostname !== 'localhost' && hostname !== '127.0.0.1';
+
+            envInfo.innerHTML = `
+                <div class="test-item ${isProduction ? 'warning' : 'success'}">
+                    <strong>Environnement:</strong> ${isProduction ? '🌍 Production (Vercel)' : '💻 Développement (localhost)'}<br>
+                    <strong>Hostname:</strong> <code>${hostname}</code><br>
+                    <strong>URL complète:</strong> <code>${window.location.href}</code><br>
+                    <strong>User Agent:</strong> <code>${navigator.userAgent.substring(0, 80)}...</code>
+                </div>
+            `;
+        }
+
+        // Test CSS
+        function testCSS() {
+            const cssTest = document.getElementById('css-test');
+            const testDiv = document.createElement('div');
+            testDiv.style.cssText = 'color: var(--yt-red);';
+            document.body.appendChild(testDiv);
+            const computedColor = getComputedStyle(testDiv).color;
+            document.body.removeChild(testDiv);
+
+            const cssLoaded = computedColor === 'rgb(255, 0, 0)';
+
+            cssTest.innerHTML = `
+                <div class="test-item ${cssLoaded ? 'success' : 'error'}">
+                    ${cssLoaded ? '✅' : '❌'} Fichier CSS chargé<br>
+                    <strong>Variable --yt-red:</strong> <code>${computedColor}</code>
+                </div>
+            `;
+        }
+
+        // Test API YouTube
+        async function testAPIConnection() {
+            const apiTest = document.getElementById('api-test');
+            apiTest.innerHTML = '<div class="test-item">⏳ Test en cours...</div>';
+
+            try {
+                // Test avec une vidéo de test YouTube
+                const testVideoId = 'dQw4w9WgXcQ';
+                const videoDetails = await youtubeAPI.getVideoDetails(testVideoId);
+
+                apiTest.innerHTML = `
+                    <div class="test-item success">
+                        ✅ API YouTube fonctionnelle !<br>
+                        <strong>Vidéo de test:</strong> ${videoDetails.title}<br>
+                        <strong>Durée:</strong> ${youtubeAPI.formatDuration(videoDetails.duration)}<br>
+                        <strong>Mode:</strong> ${youtubeAPI.USE_PROXY ? '🔒 Proxy (Production)' : '⚠️ Direct (Dev)'}
+                    </div>
+                `;
+            } catch (error) {
+                apiTest.innerHTML = `
+                    <div class="test-item error">
+                        ❌ Erreur API YouTube<br>
+                        <strong>Message:</strong> ${error.message}<br>
+                        <pre>${error.stack}</pre>
+                        <p><strong>💡 Solutions:</strong></p>
+                        <ul>
+                            <li>Vérifiez que YOUTUBE_API_KEY est configuré dans Vercel</li>
+                            <li>Vérifiez que l'API est activée dans Google Cloud Console</li>
+                            <li>Vérifiez les restrictions de la clé API</li>
+                        </ul>
+                    </div>
+                `;
+            }
+        }
+
+        // Lancer tous les tests
+        async function runAllTests() {
+            const resultsDiv = document.getElementById('tests-results');
+            resultsDiv.innerHTML = '<div class="test-item">⏳ Tests en cours...</div>';
+
+            const tests = [];
+
+            // Test 1: IndexedDB
+            try {
+                await db.init();
+                tests.push({ name: 'IndexedDB', status: 'success', message: 'Base de données initialisée' });
+            } catch (error) {
+                tests.push({ name: 'IndexedDB', status: 'error', message: error.message });
+            }
+
+            // Test 2: Vérifier si un PIN existe
+            try {
+                const pinConfigured = await security.isPinConfigured();
+                tests.push({
+                    name: 'PIN Configuration',
+                    status: pinConfigured ? 'success' : 'warning',
+                    message: pinConfigured ? 'PIN configuré' : 'Aucun PIN (utilisez init-pin.html)'
+                });
+            } catch (error) {
+                tests.push({ name: 'PIN Configuration', status: 'error', message: error.message });
+            }
+
+            // Test 3: Vidéos dans la BDD
+            try {
+                const videos = await db.getAllVideos();
+                tests.push({
+                    name: 'Vidéos',
+                    status: videos.length > 0 ? 'success' : 'warning',
+                    message: `${videos.length} vidéo(s) dans la base`
+                });
+            } catch (error) {
+                tests.push({ name: 'Vidéos', status: 'error', message: error.message });
+            }
+
+            // Test 4: Service Worker
+            if ('serviceWorker' in navigator) {
+                try {
+                    const registration = await navigator.serviceWorker.getRegistration();
+                    tests.push({
+                        name: 'Service Worker',
+                        status: registration ? 'success' : 'warning',
+                        message: registration ? 'Service Worker actif' : 'Non enregistré'
+                    });
+                } catch (error) {
+                    tests.push({ name: 'Service Worker', status: 'error', message: error.message });
+                }
+            } else {
+                tests.push({ name: 'Service Worker', status: 'error', message: 'Non supporté' });
+            }
+
+            // Test 5: YouTube API
+            try {
+                const videoId = youtubeAPI.extractVideoId('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+                tests.push({
+                    name: 'YouTube API (Parsing)',
+                    status: videoId === 'dQw4w9WgXcQ' ? 'success' : 'error',
+                    message: `ID extrait: ${videoId}`
+                });
+            } catch (error) {
+                tests.push({ name: 'YouTube API (Parsing)', status: 'error', message: error.message });
+            }
+
+            // Afficher les résultats
+            let html = '';
+            tests.forEach(test => {
+                html += `
+                    <div class="test-item ${test.status}">
+                        ${test.status === 'success' ? '✅' : test.status === 'error' ? '❌' : '⚠️'}
+                        <strong>${test.name}:</strong> ${test.message}
+                    </div>
+                `;
+            });
+
+            resultsDiv.innerHTML = html;
+        }
+
+        // Lancer au chargement
+        window.addEventListener('DOMContentLoaded', () => {
+            showEnvironmentInfo();
+            testCSS();
+            console.log('🔧 Page de debug chargée');
+            console.log('📍 URL:', window.location.href);
+            console.log('🌐 Hostname:', window.location.hostname);
+        });
+    </script>
+</body>
+</html>
