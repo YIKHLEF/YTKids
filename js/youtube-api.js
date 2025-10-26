@@ -1,15 +1,79 @@
 // Gestion de l'API YouTube Data v3 pour YouTube Kids PWA
+//
+// SÉCURITÉ : Cette version utilise un proxy serverless Vercel
+// pour protéger la clé API YouTube.
+//
+// En production (Vercel) : Utilise /api/youtube (clé API sécurisée)
+// En développement (localhost) : Utilise l'API directement (clé API locale)
 
 class YouTubeAPI {
     constructor() {
-        // IMPORTANT: Remplacer par votre clé API YouTube
-        this.API_KEY = 'YOUR_YOUTUBE_API_KEY_HERE';
-        this.BASE_URL = 'https://www.googleapis.com/youtube/v3';
+        // Détection de l'environnement
+        this.isProduction = window.location.hostname !== 'localhost' &&
+                            window.location.hostname !== '127.0.0.1';
+
+        // En production, utiliser le proxy Vercel
+        if (this.isProduction) {
+            this.USE_PROXY = true;
+            this.PROXY_URL = '/api/youtube';
+            console.log('🔒 YouTube API: Mode sécurisé (proxy Vercel)');
+        } else {
+            // En développement, appel direct (clé API en clair)
+            this.USE_PROXY = false;
+            this.API_KEY = 'YOUR_YOUTUBE_API_KEY_HERE';
+            this.BASE_URL = 'https://www.googleapis.com/youtube/v3';
+            console.log('⚠️ YouTube API: Mode développement (clé API locale)');
+        }
     }
 
-    // Configurer la clé API
+    // Configurer la clé API (développement uniquement)
     setApiKey(apiKey) {
-        this.API_KEY = apiKey;
+        if (!this.isProduction) {
+            this.API_KEY = apiKey;
+            console.log('✅ YouTube API key configurée');
+        } else {
+            console.warn('⚠️ setApiKey() ignoré en production (utilise les variables d\'environnement Vercel)');
+        }
+    }
+
+    // Faire un appel à l'API via le proxy ou directement
+    async callAPI(endpoint, params) {
+        if (this.USE_PROXY) {
+            // Mode production : Utiliser le proxy Vercel
+            const queryParams = new URLSearchParams({
+                endpoint,
+                ...params
+            });
+            const url = `${this.PROXY_URL}?${queryParams.toString()}`;
+
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || `Erreur API: ${response.status}`);
+            }
+
+            return await response.json();
+        } else {
+            // Mode développement : Appel direct
+            if (!this.API_KEY || this.API_KEY === 'YOUR_YOUTUBE_API_KEY_HERE') {
+                throw new Error('Clé API YouTube non configurée. Utilisez setApiKey() ou modifiez youtube-api.js');
+            }
+
+            const queryParams = new URLSearchParams({
+                ...params,
+                key: this.API_KEY
+            });
+            const url = `${this.BASE_URL}/${endpoint}?${queryParams.toString()}`;
+
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(`Erreur API: ${response.status}`);
+            }
+
+            return await response.json();
+        }
     }
 
     // Extraire l'ID de vidéo depuis une URL YouTube
@@ -42,14 +106,10 @@ class YouTubeAPI {
     // Récupérer les détails d'une vidéo
     async getVideoDetails(videoId) {
         try {
-            const url = `${this.BASE_URL}/videos?part=snippet,contentDetails&id=${videoId}&key=${this.API_KEY}`;
-            const response = await fetch(url);
-
-            if (!response.ok) {
-                throw new Error(`Erreur API: ${response.status}`);
-            }
-
-            const data = await response.json();
+            const data = await this.callAPI('videos', {
+                part: 'snippet,contentDetails',
+                id: videoId
+            });
 
             if (!data.items || data.items.length === 0) {
                 throw new Error('Vidéo introuvable');
@@ -87,14 +147,17 @@ class YouTubeAPI {
             let nextPageToken = null;
 
             do {
-                const url = `${this.BASE_URL}/playlistItems?part=snippet,contentDetails&playlistId=${playlistId}&maxResults=50${nextPageToken ? '&pageToken=' + nextPageToken : ''}&key=${this.API_KEY}`;
-                const response = await fetch(url);
+                const params = {
+                    part: 'snippet,contentDetails',
+                    playlistId: playlistId,
+                    maxResults: 50
+                };
 
-                if (!response.ok) {
-                    throw new Error(`Erreur API: ${response.status}`);
+                if (nextPageToken) {
+                    params.pageToken = nextPageToken;
                 }
 
-                const data = await response.json();
+                const data = await this.callAPI('playlistItems', params);
 
                 if (!data.items || data.items.length === 0) {
                     break;
